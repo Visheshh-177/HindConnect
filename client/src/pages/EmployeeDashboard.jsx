@@ -351,6 +351,39 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
                 </p>
               </div>
 
+              {/* Attachments Display */}
+              {selectedTicket.ticket.attachments && selectedTicket.ticket.attachments.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Attachments</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {selectedTicket.ticket.attachments.map((att, idx) => {
+                      const isImg = att.type && att.type.startsWith('image/');
+                      return (
+                        <div key={idx} className="bg-slate-50 border border-corporate-grayBorder rounded-xl p-3 flex flex-col justify-between space-y-2">
+                          <div className="flex items-center space-x-2">
+                            {isImg ? (
+                              <img src={att.data} alt={att.name} className="w-8 h-8 rounded object-cover border border-slate-200" />
+                            ) : (
+                              <FileSpreadsheet className="w-8 h-8 text-slate-400" />
+                            )}
+                            <span className="text-xs font-semibold text-slate-700 truncate max-w-[170px]" title={att.name}>
+                              {att.name}
+                            </span>
+                          </div>
+                          <a
+                            href={att.data}
+                            download={att.name}
+                            className="bg-white hover:bg-slate-50 border border-corporate-grayBorder text-[10px] font-bold py-1 px-2.5 rounded-lg text-center text-corporate-blue transition-colors self-start"
+                          >
+                            Download
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Comments Section */}
               <div className="space-y-4">
                 <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide border-b border-slate-100 pb-2 flex items-center">

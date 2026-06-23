@@ -95,6 +95,19 @@ export const AuthProvider = ({ children }) => {
     showAlert('You have been logged out successfully.', 'info');
   };
 
+  const updateUserProfile = async (profileData) => {
+    try {
+      const res = await api.updateProfile(profileData);
+      // Merge updated fields into existing user — don't replace entire user object
+      setUser(prev => ({ ...prev, ...res.user }));
+      showAlert('Dossier details updated successfully!', 'success');
+      return res.user;
+    } catch (error) {
+      showAlert(error.message || 'Profile update failed. Please try again.', 'error');
+      throw error;
+    }
+  };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -110,6 +123,7 @@ export const AuthProvider = ({ children }) => {
     markNotificationsRead,
     login,
     logout,
+    updateUserProfile,
     alert,
     showAlert
   };

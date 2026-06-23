@@ -14,7 +14,13 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['Employee', 'IT Staff', 'Admin'], default: 'Employee' },
   department: { type: String, required: true },
   isApproved: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  mobile: { type: String },
+  bloodGroup: { type: String },
+  doj: { type: String },
+  empCode: { type: String },
+  designation: { type: String },
+  emergencyContact: { type: String }
 });
 
 const ticketSchema = new mongoose.Schema({

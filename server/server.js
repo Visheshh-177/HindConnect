@@ -25,6 +25,7 @@ app.use(express.json());
 app.post('/api/auth/register', authController.register);
 app.post('/api/auth/login', authController.login);
 app.get('/api/auth/me', authMiddleware, authController.getMe);
+app.put('/api/users/profile', authMiddleware, authController.updateProfile);
 app.get('/api/users', authMiddleware, authorize(['Admin']), authController.getAllUsers);
 app.put('/api/users/:id/approve', authMiddleware, authorize(['Admin']), authController.approveUser);
 

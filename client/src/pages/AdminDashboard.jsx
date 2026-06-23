@@ -191,7 +191,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-corporate-grayBorder space-x-6">
+      <div className="flex flex-wrap border-b border-corporate-grayBorder gap-x-6 gap-y-2">
         <button
           onClick={() => setActiveTab('analytics')}
           className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
@@ -203,6 +203,31 @@ export default function AdminDashboard() {
           IT Support Analytics
         </button>
         <button
+          onClick={() => setActiveTab('verifications')}
+          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 flex items-center space-x-1.5 ${
+            activeTab === 'verifications' 
+              ? 'text-corporate-orange border-corporate-orange font-extrabold' 
+              : 'text-slate-400 hover:text-slate-600 border-transparent'
+          }`}
+        >
+          <span>Pending Verifications</span>
+          {usersList.filter(u => !u.isApproved).length > 0 && (
+            <span className="bg-red-500 text-white font-extrabold text-[9px] px-1.5 py-0.5 rounded-full animate-pulse">
+              {usersList.filter(u => !u.isApproved).length}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('dept_employees')}
+          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
+            activeTab === 'dept_employees' 
+              ? 'text-corporate-orange border-corporate-orange font-extrabold' 
+              : 'text-slate-400 hover:text-slate-600 border-transparent'
+          }`}
+        >
+          {user?.department} Department Employees
+        </button>
+        <button
           onClick={() => setActiveTab('users')}
           className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors border-b-2 ${
             activeTab === 'users' 
@@ -210,7 +235,7 @@ export default function AdminDashboard() {
               : 'text-slate-400 hover:text-slate-600 border-transparent'
           }`}
         >
-          Registered Users Management
+          All Users Directory
         </button>
       </div>
 
@@ -452,94 +477,114 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 2. Registered Users Tab View */}
-          {activeTab === 'users' && (
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-corporate-grayBorder bg-slate-50/50 flex justify-between items-center bg-slate-50/50">
-                <h3 className="font-bold text-sm text-corporate-blue">Registered System Users</h3>
-                <span className="text-xs bg-corporate-blueSoft text-corporate-blue px-2.5 py-1 rounded-lg font-semibold border border-corporate-blueSoft/30">
-                  Total Accounts: {usersList.length}
-                </span>
-              </div>
-              
-              <div className="overflow-x-auto text-xs">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-corporate-grayBorder text-slate-700 font-bold uppercase tracking-wider text-[10px]">
-                      <th className="px-6 py-3">Full Name</th>
-                      <th className="px-6 py-3">Email Address</th>
-                      <th className="px-6 py-3">Department</th>
-                      <th className="px-6 py-3">System Role</th>
-                      <th className="px-6 py-3">Account Status</th>
-                      <th className="px-6 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                    {usersList.length === 0 ? (
-                      <tr>
-                        <td colSpan="6" className="px-6 py-12 text-center text-corporate-textMuted">
-                          No users registered in system.
-                        </td>
+          {/* User List Tables */}
+          {(activeTab === 'users' || activeTab === 'verifications' || activeTab === 'dept_employees') && (() => {
+            let list = [];
+            let tableTitle = '';
+            let emptyMsg = '';
+
+            if (activeTab === 'users') {
+              list = usersList;
+              tableTitle = 'Registered System Users';
+              emptyMsg = 'No users registered in system.';
+            } else if (activeTab === 'verifications') {
+              list = usersList.filter(u => !u.isApproved);
+              tableTitle = 'New User Verification Queue';
+              emptyMsg = 'No pending approvals in verification queue.';
+            } else if (activeTab === 'dept_employees') {
+              list = usersList.filter(u => u.department === user?.department);
+              tableTitle = `${user?.department || ''} Department Employees`;
+              emptyMsg = `No employees registered in the ${user?.department || ''} department.`;
+            }
+
+            return (
+              <div className="bg-white border border-corporate-grayBorder rounded-2xl shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-corporate-grayBorder bg-slate-50/50 flex justify-between items-center bg-slate-50/50">
+                  <h3 className="font-bold text-sm text-corporate-blue">{tableTitle}</h3>
+                  <span className="text-xs bg-corporate-blueSoft text-corporate-blue px-2.5 py-1 rounded-lg font-semibold border border-corporate-blueSoft/30">
+                    Total Accounts: {list.length}
+                  </span>
+                </div>
+                
+                <div className="overflow-x-auto text-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-corporate-grayBorder text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                        <th className="px-6 py-3">Full Name</th>
+                        <th className="px-6 py-3">Email Address</th>
+                        <th className="px-6 py-3">Department</th>
+                        <th className="px-6 py-3">System Role</th>
+                        <th className="px-6 py-3">Account Status</th>
+                        <th className="px-6 py-3 text-right">Actions</th>
                       </tr>
-                    ) : (
-                      usersList.map((u) => (
-                        <tr 
-                          key={u.id || u._id}
-                          className="hover:bg-slate-50/60 transition-colors cursor-pointer"
-                          onClick={() => setSelectedUser(u)}
-                        >
-                          <td className="px-6 py-4 font-bold text-slate-800 flex items-center space-x-2">
-                            <div className="w-7 h-7 rounded-full bg-corporate-orange/10 text-corporate-orange flex items-center justify-center font-bold text-[10px] uppercase border border-corporate-orange/20">
-                              {u.name.charAt(0)}
-                            </div>
-                            <span>{u.name}</span>
-                          </td>
-                          <td className="px-6 py-4 font-semibold text-corporate-blue">{u.email}</td>
-                          <td className="px-6 py-4 text-slate-500">{u.department}</td>
-                          <td className="px-6 py-4">
-                            <span className="inline-block text-[9px] font-extrabold tracking-wide px-2 py-0.5 rounded bg-corporate-blueSoft text-corporate-blue border border-corporate-blueSoft/30 uppercase">
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            {u.isApproved ? (
-                              <span className="inline-flex items-center space-x-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
-                                <CheckCircle className="w-3 h-3 text-green-600" />
-                                <span>Approved</span>
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center space-x-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full animate-pulse">
-                                <Clock className="w-3 h-3 text-amber-600" />
-                                <span>Pending Approval</span>
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex justify-end items-center space-x-2.5">
-                              {!u.isApproved && (
-                                <button
-                                  onClick={() => handleApproveUser(u.id || u._id)}
-                                  className="bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg shadow-sm cursor-pointer"
-                                >
-                                  Approve
-                                </button>
-                              )}
-                              <button
-                                onClick={() => setSelectedUser(u)}
-                                className="border border-corporate-grayBorder hover:bg-slate-50 text-slate-600 font-semibold text-[10px] px-2.5 py-1 rounded-lg cursor-pointer"
-                              >
-                                View Details
-                              </button>
-                            </div>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                      {list.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="px-6 py-12 text-center text-corporate-textMuted">
+                            {emptyMsg}
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        list.map((u) => (
+                          <tr 
+                            key={u.id || u._id}
+                            className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                            onClick={() => setSelectedUser(u)}
+                          >
+                            <td className="px-6 py-4 font-bold text-slate-800 flex items-center space-x-2">
+                              <div className="w-7 h-7 rounded-full bg-corporate-orange/10 text-corporate-orange flex items-center justify-center font-bold text-[10px] uppercase border border-corporate-orange/20">
+                                {u.name.charAt(0)}
+                              </div>
+                              <span>{u.name}</span>
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-corporate-blue">{u.email}</td>
+                            <td className="px-6 py-4 text-slate-500">{u.department}</td>
+                            <td className="px-6 py-4">
+                              <span className="inline-block text-[9px] font-extrabold tracking-wide px-2 py-0.5 rounded bg-corporate-blueSoft text-corporate-blue border border-corporate-blueSoft/30 uppercase">
+                                {u.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {u.isApproved ? (
+                                <span className="inline-flex items-center space-x-1 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+                                  <CheckCircle className="w-3 h-3 text-green-600" />
+                                  <span>Approved</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center space-x-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full animate-pulse">
+                                  <Clock className="w-3 h-3 text-amber-600" />
+                                  <span>Pending Approval</span>
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex justify-end items-center space-x-2.5">
+                                {!u.isApproved && (
+                                  <button
+                                    onClick={() => handleApproveUser(u.id || u._id)}
+                                    className="bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg shadow-sm cursor-pointer"
+                                  >
+                                    Approve
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => setSelectedUser(u)}
+                                  className="border border-corporate-grayBorder hover:bg-slate-50 text-slate-600 font-semibold text-[10px] px-2.5 py-1 rounded-lg cursor-pointer"
+                                >
+                                  View Details
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </>
       )}
 
@@ -647,7 +692,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="space-y-2.5">
+               <div className="space-y-2.5">
                 <div className="flex justify-between">
                   <span className="text-slate-400 font-semibold">Email Address</span>
                   <span className="font-bold text-slate-700">{selectedUser.email}</span>
@@ -662,7 +707,36 @@ export default function AdminDashboard() {
                   <span className="text-slate-400 font-semibold">Site Department</span>
                   <span className="font-bold text-slate-700">{selectedUser.department}</span>
                 </div>
-                <div className="flex justify-between">
+
+                {/* Profile Details */}
+                <div className="border-t border-slate-100 pt-2.5 space-y-2.5">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Employee Code</span>
+                    <span className="font-bold text-slate-700">{selectedUser.empCode || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Designation</span>
+                    <span className="font-bold text-slate-700">{selectedUser.designation || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Date of Joining</span>
+                    <span className="font-bold text-slate-700">{selectedUser.doj || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Mobile Number</span>
+                    <span className="font-bold text-slate-700">{selectedUser.mobile || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Blood Group</span>
+                    <span className="font-bold text-red-600">{selectedUser.bloodGroup || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400 font-semibold">Emergency Contact</span>
+                    <span className="font-bold text-slate-700">{selectedUser.emergencyContact || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between border-t border-slate-100 pt-2.5">
                   <span className="text-slate-400 font-semibold">Account Status</span>
                   {selectedUser.isApproved ? (
                     <span className="text-green-600 font-bold">Approved & Active</span>

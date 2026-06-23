@@ -20,6 +20,12 @@ export default function LoginPage({ onLoginSuccess }) {
   const [regPassword, setRegPassword] = useState('');
   const [regRole, setRegRole] = useState('Employee');
   const [regDept, setRegDept] = useState('Refinery');
+  const [regEmpCode, setRegEmpCode] = useState('');
+  const [regDesignation, setRegDesignation] = useState('');
+  const [regDoj, setRegDoj] = useState('');
+  const [regMobile, setRegMobile] = useState('');
+  const [regBloodGroup, setRegBloodGroup] = useState('A+');
+  const [regEmergencyContact, setRegEmergencyContact] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [regLoading, setRegLoading] = useState(false);
 
@@ -41,7 +47,14 @@ export default function LoginPage({ onLoginSuccess }) {
     setSuccessMsg('');
     try {
       setRegLoading(true);
-      const res = await api.register(regName, regEmail, regPassword, regRole, regDept);
+      const res = await api.register(regName, regEmail, regPassword, regRole, regDept, {
+        empCode: regEmpCode,
+        designation: regDesignation,
+        doj: regDoj,
+        mobile: regMobile,
+        bloodGroup: regBloodGroup,
+        emergencyContact: regEmergencyContact
+      });
       setSuccessMsg(res.message || 'Registration successful! Your account is pending IT Administrator approval.');
       // Clear registration form
       setRegName('');
@@ -49,6 +62,12 @@ export default function LoginPage({ onLoginSuccess }) {
       setRegPassword('');
       setRegRole('Employee');
       setRegDept('Refinery');
+      setRegEmpCode('');
+      setRegDesignation('');
+      setRegDoj('');
+      setRegMobile('');
+      setRegBloodGroup('A+');
+      setRegEmergencyContact('');
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed.');
     } finally {
@@ -244,7 +263,7 @@ export default function LoginPage({ onLoginSuccess }) {
                       id="regRole"
                       value={regRole}
                       onChange={(e) => setRegRole(e.target.value)}
-                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-slate-50/30 transition-all hover:border-slate-300 focus:bg-white"
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white hover:border-slate-300 transition-all cursor-pointer"
                     >
                       <option value="Employee">Employee</option>
                       <option value="IT Staff">IT Staff</option>
@@ -260,7 +279,7 @@ export default function LoginPage({ onLoginSuccess }) {
                       id="regDept"
                       value={regDept}
                       onChange={(e) => setRegDept(e.target.value)}
-                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-slate-50/30 transition-all hover:border-slate-300 focus:bg-white"
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white hover:border-slate-300 transition-all cursor-pointer"
                     >
                       <option value="Refinery">Refinery</option>
                       <option value="Smelter">Smelter</option>
@@ -269,6 +288,106 @@ export default function LoginPage({ onLoginSuccess }) {
                       <option value="Finance">Finance</option>
                       <option value="IT">IT</option>
                     </select>
+                  </div>
+                </div>
+
+                {/* Employee Code & Designation */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label htmlFor="regEmpCode" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Employee Code
+                    </label>
+                    <input
+                      id="regEmpCode"
+                      type="text"
+                      required
+                      placeholder="HC-EMP-12345"
+                      value={regEmpCode}
+                      onChange={(e) => setRegEmpCode(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="regDesignation" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Designation
+                    </label>
+                    <input
+                      id="regDesignation"
+                      type="text"
+                      required
+                      placeholder="e.g. Operator"
+                      value={regDesignation}
+                      onChange={(e) => setRegDesignation(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300"
+                    />
+                  </div>
+                </div>
+
+                {/* Date of Joining & Blood Group */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label htmlFor="regDoj" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Date of Joining
+                    </label>
+                    <input
+                      id="regDoj"
+                      type="text"
+                      required
+                      placeholder="e.g. 15 Aug 2024"
+                      value={regDoj}
+                      onChange={(e) => setRegDoj(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="regBloodGroup" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Blood Group
+                    </label>
+                    <select
+                      id="regBloodGroup"
+                      value={regBloodGroup}
+                      onChange={(e) => setRegBloodGroup(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300 cursor-pointer"
+                    >
+                      {['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'].map(bg => (
+                        <option key={bg} value={bg}>{bg}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Mobile Number & Emergency Contact */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label htmlFor="regMobile" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Mobile Number
+                    </label>
+                    <input
+                      id="regMobile"
+                      type="text"
+                      required
+                      placeholder="+91 XXXXXXXXXX"
+                      value={regMobile}
+                      onChange={(e) => setRegMobile(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label htmlFor="regEmergencyContact" className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                      Emergency Contact
+                    </label>
+                    <input
+                      id="regEmergencyContact"
+                      type="text"
+                      required
+                      placeholder="+91 XXXXXXXXXX"
+                      value={regEmergencyContact}
+                      onChange={(e) => setRegEmergencyContact(e.target.value)}
+                      className="w-full px-3 py-3 border border-slate-200 focus:border-corporate-orange focus:ring-2 focus:ring-corporate-orange/20 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white transition-all hover:border-slate-300"
+                    />
                   </div>
                 </div>
 

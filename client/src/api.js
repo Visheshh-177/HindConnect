@@ -34,10 +34,10 @@ export const api = {
     body: JSON.stringify({ email, password }),
   }).then(handleResponse),
 
-  register: (name, email, password, role, department) => fetch(`${API_BASE_URL}/auth/register`, {
+  register: (name, email, password, role, department, profileDetails = {}) => fetch(`${API_BASE_URL}/auth/register`, {
     method: 'POST',
     headers: getHeaders(),
-    body: JSON.stringify({ name, email, password, role, department }),
+    body: JSON.stringify({ name, email, password, role, department, ...profileDetails }),
   }).then(handleResponse),
 
   getMe: () => fetch(`${API_BASE_URL}/auth/me`, {
@@ -135,6 +135,12 @@ export const api = {
   }).then(handleResponse),
 
   // Admin User Management
+  updateProfile: (profileData) => fetch(`${API_BASE_URL}/users/profile`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(profileData),
+  }).then(handleResponse),
+
   getUsers: () => fetch(`${API_BASE_URL}/users`, {
     method: 'GET',
     headers: getHeaders(),

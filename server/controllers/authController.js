@@ -6,7 +6,19 @@ const JWT_SECRET = process.env.JWT_SECRET || 'hindconnect_secret_key_2026';
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, role, department } = req.body;
+    const { 
+      name, 
+      email, 
+      password, 
+      role, 
+      department,
+      mobile,
+      bloodGroup,
+      doj,
+      empCode,
+      designation,
+      emergencyContact
+    } = req.body;
 
     if (!name || !email || !password || !department) {
       return res.status(400).json({ message: 'Please provide all required fields' });
@@ -26,7 +38,13 @@ const register = async (req, res) => {
       password: hashedPassword,
       role: role || 'Employee',
       department,
-      isApproved: false
+      isApproved: false,
+      mobile,
+      bloodGroup,
+      doj,
+      empCode,
+      designation,
+      emergencyContact
     });
 
     // Notify all Admins about this registration request
@@ -89,7 +107,13 @@ const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        department: user.department
+        department: user.department,
+        mobile: user.mobile,
+        bloodGroup: user.bloodGroup,
+        doj: user.doj,
+        empCode: user.empCode,
+        designation: user.designation,
+        emergencyContact: user.emergencyContact
       }
     });
   } catch (error) {
@@ -111,7 +135,13 @@ const getMe = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      department: user.department
+      department: user.department,
+      mobile: user.mobile,
+      bloodGroup: user.bloodGroup,
+      doj: user.doj,
+      empCode: user.empCode,
+      designation: user.designation,
+      emergencyContact: user.emergencyContact
     });
   } catch (error) {
     console.error('getMe error:', error);
@@ -129,7 +159,13 @@ const getAllUsers = async (req, res) => {
       role: u.role,
       department: u.department,
       isApproved: u.isApproved !== false, // default to true if undefined
-      createdAt: u.createdAt
+      createdAt: u.createdAt,
+      mobile: u.mobile,
+      bloodGroup: u.bloodGroup,
+      doj: u.doj,
+      empCode: u.empCode,
+      designation: u.designation,
+      emergencyContact: u.emergencyContact
     }));
     res.json(formatted);
   } catch (error) {
@@ -167,11 +203,54 @@ const approveUser = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { mobile, bloodGroup, doj, empCode, designation, emergencyContact } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      mobile,
+      bloodGroup,
+      doj,
+      empCode,
+      designation,
+      emergencyContact
+    });
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: updatedUser.id || updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        department: updatedUser.department,
+        isApproved: updatedUser.isApproved,
+        mobile: updatedUser.mobile,
+        bloodGroup: updatedUser.bloodGroup,
+        doj: updatedUser.doj,
+        empCode: updatedUser.empCode,
+        designation: updatedUser.designation,
+        emergencyContact: updatedUser.emergencyContact
+      }
+    });
+  } catch (error) {
+    console.error('updateProfile error:', error);
+    res.status(500).json({ message: 'Server error updating profile' });
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
   getAllUsers,
   approveUser,
+  updateProfile,
   JWT_SECRET
 };

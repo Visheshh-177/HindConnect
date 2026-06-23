@@ -6,7 +6,7 @@ import ItStaffDashboard from './ItStaffDashboard';
 import AdminDashboard from './AdminDashboard';
 import KnowledgeBasePage from './KnowledgeBasePage';
 import { useAuth } from '../context/AuthContext';
-import { Landmark, Menu, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Landmark, Menu, ShieldCheck, ChevronRight, X, LogOut } from 'lucide-react';
 
 const getDossierDetails = (user) => {
   if (!user) return null;
@@ -19,35 +19,85 @@ const getDossierDetails = (user) => {
   };
   
   const hash = getHash(user.email || user.name);
-  const mobile = `+91 987${(hash % 900000) + 100000}`;
-  const bloodGroups = ['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-'];
-  const bloodGroup = bloodGroups[hash % bloodGroups.length];
+  const isSeeded = user.email && (
+    user.email.endsWith('@hindconnect.com') && 
+    !user.email.includes('.new') && 
+    user.email !== 'vishesh4757@gmail.com'
+  );
+
+  const mobile = user.mobile || (isSeeded ? `+91 987${(hash % 900000) + 100000}` : 'Not Set');
+  const bloodGroups = ['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'];
+  const bloodGroup = user.bloodGroup || (isSeeded ? bloodGroups[hash % bloodGroups.length] : 'Not Set');
   
   const yearsAgo = (hash % 6) + 1;
-  const doj = new Date(2026 - yearsAgo, hash % 12, (hash % 28) + 1).toLocaleDateString('en-IN', {
+  const doj = user.doj || (isSeeded ? new Date(2026 - yearsAgo, hash % 12, (hash % 28) + 1).toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
-  });
+  }) : 'Not Set');
   
-  const empCode = `HC-EMP-${(hash % 90000) + 10000}`;
+  const empCode = user.empCode || (isSeeded ? `HC-EMP-${(hash % 90000) + 10000}` : 'Not Set');
   
   const designationMap = {
     Employee: 'Operations Supervisor',
     'IT Staff': 'Network Systems Administrator',
     Admin: 'Principal Systems Administrator'
   };
-  const designation = designationMap[user.role] || 'Associate Engineer';
+  const designation = user.designation || (isSeeded ? (designationMap[user.role] || 'Associate Engineer') : 'Not Set');
   
-  const emergencyContact = `+91 961${(hash % 800000) + 100000}`;
+  const emergencyContact = user.emergencyContact || (isSeeded ? `+91 961${(hash % 800000) + 100000}` : 'Not Set');
 
   return { mobile, bloodGroup, doj, empCode, designation, emergencyContact };
 };
 
 export default function Dashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading, updateUserProfile, logout } = useAuth();
   const [currentSubpage, setCurrentSubpage] = useState('');
   const [isProfileExpanded, setIsProfileExpanded] = useState(true);
+
+  // Edit Profile Modal States
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editEmpCode, setEditEmpCode] = useState('');
+  const [editDesignation, setEditDesignation] = useState('');
+  const [editDoj, setEditDoj] = useState('');
+  const [editMobile, setEditMobile] = useState('');
+  const [editBloodGroup, setEditBloodGroup] = useState('');
+  const [editEmergencyContact, setEditEmergencyContact] = useState('');
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
+  const handleOpenEditModal = () => {
+    const details = getDossierDetails(user);
+    setEditEmpCode(user.empCode || details?.empCode || '');
+    setEditDesignation(user.designation || details?.designation || '');
+    setEditDoj(user.doj || details?.doj || '');
+    setEditMobile(user.mobile || details?.mobile || '');
+    setEditBloodGroup(user.bloodGroup || details?.bloodGroup || 'A+');
+    setEditEmergencyContact(user.emergencyContact || details?.emergencyContact || '');
+    setSaveError('');
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setSaveError('');
+    try {
+      setSaveLoading(true);
+      await updateUserProfile({
+        empCode: editEmpCode,
+        designation: editDesignation,
+        doj: editDoj,
+        mobile: editMobile,
+        bloodGroup: editBloodGroup,
+        emergencyContact: editEmergencyContact
+      });
+      setIsEditModalOpen(false);
+    } catch (err) {
+      setSaveError(err.message || 'Failed to save profile. Please try again.');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
 
   // Set default subpage based on role when user loads
   useEffect(() => {
@@ -146,6 +196,16 @@ export default function Dashboard() {
               AD Active
             </span>
             <span>Support Ext: 4400</span>
+            <button
+              onClick={() => {
+                logout();
+                window.location.reload();
+              }}
+              className="ml-2 flex items-center space-x-1.5 px-3 py-1.5 border border-red-200 hover:border-red-300 text-red-650 hover:text-red-700 bg-red-50/50 hover:bg-red-50 rounded-lg text-[11px] font-bold transition-all shadow-sm cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Exit Dashboard</span>
+            </button>
           </div>
         </header>
 
@@ -228,6 +288,15 @@ export default function Dashboard() {
                       <span className="font-bold text-slate-800 block">{getDossierDetails(user)?.emergencyContact}</span>
                     </div>
 
+                    <div className="col-span-2 sm:col-span-3 flex justify-end pt-4 border-t border-slate-100/50">
+                      <button
+                        onClick={handleOpenEditModal}
+                        className="bg-corporate-orange hover:bg-corporate-orangeHover text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center space-x-1.5"
+                      >
+                        Update Dossier Details
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               )}
@@ -237,6 +306,129 @@ export default function Dashboard() {
           {renderSubpageContent()}
         </main>
       </div>
+
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-zoom-in relative">
+            <div className="px-6 py-4 bg-corporate-blue text-white flex items-center justify-between">
+              <div>
+                <span className="text-[9px] uppercase font-extrabold tracking-widest text-corporate-orange">Dossier Details Update</span>
+                <h3 className="font-extrabold text-sm leading-tight">Edit Basic Profile Details</h3>
+              </div>
+              <button 
+                onClick={() => setIsEditModalOpen(false)}
+                className="p-1 rounded-full text-slate-300 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProfile} className="p-6 space-y-4 text-xs">
+              {/* Inline error display */}
+              {saveError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-xl">
+                  ⚠ {saveError}
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Employee Code</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="HC-EMP-XXXXX"
+                    value={editEmpCode}
+                    onChange={(e) => setEditEmpCode(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Designation</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Associate Engineer"
+                    value={editDesignation}
+                    onChange={(e) => setEditDesignation(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Date of Joining</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 15 Aug 2024"
+                    value={editDoj}
+                    onChange={(e) => setEditDoj(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Blood Group</label>
+                  <select
+                    value={editBloodGroup}
+                    onChange={(e) => setEditBloodGroup(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800 text-slate-800"
+                  >
+                    {['A+', 'B+', 'O+', 'AB+', 'A-', 'B-', 'O-', 'AB-'].map(bg => (
+                      <option key={bg} value={bg}>{bg}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Mobile Number</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+91 XXXXXXXXXX"
+                    value={editMobile}
+                    onChange={(e) => setEditMobile(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Emergency Contact</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+91 XXXXXXXXXX"
+                    value={editEmergencyContact}
+                    onChange={(e) => setEditEmergencyContact(e.target.value)}
+                    className="w-full px-3 py-2 border border-corporate-grayBorder rounded-xl text-xs outline-none bg-white text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end space-x-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border border-corporate-grayBorder text-slate-600 rounded-xl text-xs font-semibold hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saveLoading}
+                  className="px-5 py-2 bg-corporate-orange hover:bg-corporate-orangeHover text-white rounded-xl text-xs font-bold transition-colors shadow"
+                >
+                  {saveLoading ? 'Saving...' : 'Save Dossier Details'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

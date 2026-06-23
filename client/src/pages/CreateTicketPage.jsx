@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import AiAssistantPanel from '../components/AiAssistantPanel';
-import { Landmark, ArrowLeft, Upload, Send, Cpu } from 'lucide-react';
+import { Landmark, ArrowLeft, Upload, Send, Cpu, X } from 'lucide-react';
 
 export default function CreateTicketPage({ onNavigateSubpage }) {
   const { user, showAlert } = useAuth();
@@ -14,12 +14,66 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
   const [urgency, setUrgency] = useState('Medium');
   const [loading, setLoading] = useState(false);
   
+  // Attachments State
+  const [attachments, setAttachments] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef(null);
+  
   // AI Suggestions
   const [aiSuggestions, setAiSuggestions] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   
   // Debounce timeout ref
   const debounceTimeoutRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    processFiles(files);
+  };
+
+  const processFiles = (files) => {
+    files.forEach(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        showAlert(`File ${file.name} exceeds 10MB limit`, 'warning');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAttachments(prev => [
+          ...prev,
+          {
+            name: file.name,
+            type: file.type,
+            data: reader.result
+          }
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemoveAttachment = (idx) => {
+    setAttachments(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFiles(Array.from(e.dataTransfer.files));
+    }
+  };
 
   // Trigger AI analysis as user types
   const triggerAiAnalysis = async (currentTitle, currentDesc) => {
@@ -96,7 +150,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
         department,
         priority: urgency,
         category: aiSuggestions?.predictedCategory || 'Software',
-        attachments: []
+        attachments: attachments
       };
 
       await api.createTicket(payload);
@@ -200,16 +254,62 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
               ></textarea>
             </div>
 
-            {/* Upload Mock */}
+            {/* Upload Section */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wide block">
                 Attachments (Log files, Screenshots)
               </label>
-              <div className="border-2 border-dashed border-slate-200 hover:border-corporate-blue/40 rounded-xl p-4 text-center cursor-pointer transition-colors">
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*,.log,text/plain,application/pdf"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                  dragActive 
+                    ? 'border-corporate-orange bg-corporate-orange/5' 
+                    : 'border-slate-200 hover:border-corporate-blue/40'
+                }`}
+              >
                 <Upload className="w-5 h-5 mx-auto text-slate-400" />
-                <span className="text-[11px] text-slate-500 font-semibold block mt-1.5">Drag files or browse local disk</span>
-                <span className="text-[9px] text-slate-400 block mt-0.5">JPEG, PNG, LOG formats up to 10MB</span>
+                <span className="text-[11px] text-slate-500 font-semibold block mt-1.5">
+                  {dragActive ? 'Drop files here' : 'Drag files or browse local disk'}
+                </span>
+                <span className="text-[9px] text-slate-400 block mt-0.5">JPEG, PNG, LOG, TXT formats up to 10MB</span>
               </div>
+
+              {/* Attachments List */}
+              {attachments.length > 0 && (
+                <div className="mt-2.5 space-y-1.5">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                    Attached Files ({attachments.length})
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {attachments.map((att, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                        <span className="truncate font-medium text-slate-700 max-w-[160px]">{att.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveAttachment(idx)}
+                          className="text-red-500 hover:text-red-700 p-0.5 hover:bg-red-50 rounded transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Submit Bar */}
