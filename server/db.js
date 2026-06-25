@@ -73,7 +73,17 @@ const activityLogSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-let MongoUser, MongoTicket, MongoComment, MongoKb, MongoNotification, MongoActivityLog;
+// OTP verification schema — TTL index auto-deletes document after 5 minutes
+const otpVerificationSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  hashedOtp: { type: String, required: true },
+  expiresAt: { type: Date, required: true },
+  attempts: { type: Number, default: 0 },
+  lastSentAt: { type: Date, default: Date.now }
+});
+otpVerificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+let MongoUser, MongoTicket, MongoComment, MongoKb, MongoNotification, MongoActivityLog, MongoOtpVerification;
 
 // Initialize JSON database if needed
 const initJsonDb = () => {
@@ -84,9 +94,17 @@ const initJsonDb = () => {
       comments: [],
       knowledge_base: [],
       notifications: [],
-      activity_logs: []
+      activity_logs: [],
+      otp_verifications: []
     };
     fs.writeFileSync(JSON_DB_PATH, JSON.stringify(initialData, null, 2), 'utf8');
+  } else {
+    // Ensure otp_verifications collection exists in legacy JSON DBs
+    const db = JSON.parse(fs.readFileSync(JSON_DB_PATH, 'utf8'));
+    if (!db.otp_verifications) {
+      db.otp_verifications = [];
+      fs.writeFileSync(JSON_DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+    }
   }
 };
 
@@ -103,7 +121,8 @@ const readJsonDb = () => {
       comments: [],
       knowledge_base: [],
       notifications: [],
-      activity_logs: []
+      activity_logs: [],
+      otp_verifications: []
     };
     fs.writeFileSync(JSON_DB_PATH, JSON.stringify(initialData, null, 2), 'utf8');
     return initialData;
@@ -206,6 +225,42 @@ class JsonModel {
     const items = await this.find(query);
     return items.length;
   }
+
+  // Upsert: update existing record matching query, or create new one
+  async upsert(query, data) {
+    const db = readJsonDb();
+    const items = db[this.collectionName] || [];
+    const index = items.findIndex(item => {
+      for (let key in query) {
+        if (item[key] !== query[key]) return false;
+      }
+      return true;
+    });
+    if (index !== -1) {
+      items[index] = { ...items[index], ...data, updatedAt: new Date().toISOString() };
+      db[this.collectionName] = items;
+      writeJsonDb(db);
+      return { ...items[index] };
+    } else {
+      return this.create(data);
+    }
+  }
+
+  async deleteOne(query = {}) {
+    const db = readJsonDb();
+    const items = db[this.collectionName] || [];
+    const index = items.findIndex(item => {
+      for (let key in query) {
+        if (item[key] !== query[key]) return false;
+      }
+      return true;
+    });
+    if (index === -1) return { deletedCount: 0 };
+    items.splice(index, 1);
+    db[this.collectionName] = items;
+    writeJsonDb(db);
+    return { deletedCount: 1 };
+  }
 }
 
 // Connect Function
@@ -223,6 +278,7 @@ const connectDB = async () => {
       MongoKb = mongoose.model('KnowledgeBase', kbSchema);
       MongoNotification = mongoose.model('Notification', notificationSchema);
       MongoActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+      MongoOtpVerification = mongoose.model('OtpVerification', otpVerificationSchema);
       return;
     } catch (error) {
       console.warn('MongoDB connection failed. Falling back to local JSON database.', error.message);
@@ -258,6 +314,25 @@ const getModel = (name, mongoModelFactory, jsonCollectionName) => {
   };
 };
 
+// Extended model factory for OtpVerification (needs upsert + deleteOne)
+const getOtpModel = () => ({
+  findOne: (query) => useMongo
+    ? MongoOtpVerification.findOne(query).lean()
+    : new JsonModel('otp_verifications').findOne(query),
+  upsert: async (query, data) => {
+    if (useMongo) {
+      return MongoOtpVerification.findOneAndUpdate(query, { $set: data }, { upsert: true, new: true }).lean();
+    }
+    return new JsonModel('otp_verifications').upsert(query, data);
+  },
+  updateOne: (query, update) => useMongo
+    ? MongoOtpVerification.updateOne(query, update)
+    : new JsonModel('otp_verifications').updateOne(query, update),
+  deleteOne: (query) => useMongo
+    ? MongoOtpVerification.deleteOne(query)
+    : new JsonModel('otp_verifications').deleteOne(query),
+});
+
 module.exports = {
   connectDB,
   User: getModel('User', () => MongoUser, 'users'),
@@ -265,5 +340,6 @@ module.exports = {
   Comment: getModel('Comment', () => MongoComment, 'comments'),
   KnowledgeBase: getModel('KnowledgeBase', () => MongoKb, 'knowledge_base'),
   Notification: getModel('Notification', () => MongoNotification, 'notifications'),
-  ActivityLog: getModel('ActivityLog', () => MongoActivityLog, 'activity_logs')
+  ActivityLog: getModel('ActivityLog', () => MongoActivityLog, 'activity_logs'),
+  OtpVerification: getOtpModel()
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Landmark, Mail, Lock, ShieldAlert, User, Compass } from 'lucide-react';
 import { api } from '../api';
+import OtpModal from '../components/OtpModal';
 
 const navItems = [
   { label: 'Home', id: 'landing' }
@@ -29,6 +30,10 @@ export default function LoginPage({ onLoginSuccess }) {
   const [successMsg, setSuccessMsg] = useState('');
   const [regLoading, setRegLoading] = useState(false);
 
+  // OTP verification state
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [pendingRegData, setPendingRegData] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -47,16 +52,42 @@ export default function LoginPage({ onLoginSuccess }) {
     setSuccessMsg('');
     try {
       setRegLoading(true);
-      const res = await api.register(regName, regEmail, regPassword, regRole, regDept, {
+
+      // Step 1 — Send OTP to the provided email
+      await api.sendOtp(regEmail);
+
+      // Step 2 — Save form data and show OTP verification modal
+      setPendingRegData({
+        name: regName,
+        email: regEmail,
+        password: regPassword,
+        role: regRole,
+        department: regDept,
         empCode: regEmpCode,
         designation: regDesignation,
         doj: regDoj,
         mobile: regMobile,
         bloodGroup: regBloodGroup,
-        emergencyContact: regEmergencyContact
+        emergencyContact: regEmergencyContact,
       });
+      setShowOtpModal(true);
+    } catch (err) {
+      setErrorMsg(err.message || 'Failed to send OTP. Please try again.');
+    } finally {
+      setRegLoading(false);
+    }
+  };
+
+  // Called by OtpModal once email is successfully verified
+  const handleOtpVerified = async () => {
+    setShowOtpModal(false);
+    if (!pendingRegData) return;
+    try {
+      setRegLoading(true);
+      const { name, email, password, role, department, ...profileDetails } = pendingRegData;
+      const res = await api.register(name, email, password, role, department, profileDetails);
       setSuccessMsg(res.message || 'Registration successful! Your account is pending IT Administrator approval.');
-      // Clear registration form
+      // Clear form
       setRegName('');
       setRegEmail('');
       setRegPassword('');
@@ -68,8 +99,9 @@ export default function LoginPage({ onLoginSuccess }) {
       setRegMobile('');
       setRegBloodGroup('A+');
       setRegEmergencyContact('');
+      setPendingRegData(null);
     } catch (err) {
-      setErrorMsg(err.message || 'Registration failed.');
+      setErrorMsg(err.message || 'Registration failed. Please try again.');
     } finally {
       setRegLoading(false);
     }
@@ -107,6 +139,17 @@ export default function LoginPage({ onLoginSuccess }) {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-corporate-gray">
+      {/* OTP Verification Modal */}
+      {showOtpModal && pendingRegData && (
+        <OtpModal
+          email={pendingRegData.email}
+          onVerified={handleOtpVerified}
+          onClose={() => {
+            setShowOtpModal(false);
+            setErrorMsg('Registration cancelled. Please try again.');
+          }}
+        />
+      )}
       {/* 1. Left side - Corporate brand & Illustration */}
       <div
         className="w-full md:w-1/2 text-white flex flex-col justify-between p-10 md:p-20 relative overflow-hidden bg-cover bg-center bg-no-repeat"

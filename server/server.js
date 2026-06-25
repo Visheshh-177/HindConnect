@@ -10,6 +10,7 @@ const ticketController = require('./controllers/ticketController');
 const kbController = require('./controllers/kbController');
 const aiController = require('./controllers/aiController');
 const analyticsController = require('./controllers/analyticsController');
+const otpController = require('./controllers/otpController');
 
 dotenv.config();
 
@@ -28,6 +29,10 @@ app.get('/api/auth/me', authMiddleware, authController.getMe);
 app.put('/api/users/profile', authMiddleware, authController.updateProfile);
 app.get('/api/users', authMiddleware, authorize(['Admin']), authController.getAllUsers);
 app.put('/api/users/:id/approve', authMiddleware, authorize(['Admin']), authController.approveUser);
+
+// 1b. OTP Verification routes (public — no auth required)
+app.post('/api/auth/send-otp', otpController.sendOtp);
+app.post('/api/auth/verify-otp', otpController.verifyOtp);
 
 // 2. Ticket routes
 app.post('/api/tickets', authMiddleware, ticketController.createTicket);
