@@ -1,5 +1,4 @@
-import React from 'react';
-import { Landmark, Mail, Phone, ExternalLink } from 'lucide-react';
+import { Mail, Phone, ExternalLink } from 'lucide-react';
 
 export default function Footer({ onNavigate }) {
   return (

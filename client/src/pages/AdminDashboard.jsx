@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -17,8 +17,6 @@ import {
   Legend 
 } from 'recharts';
 import { 
-  ShieldAlert, 
-  AlertTriangle, 
   TrendingUp, 
   Users, 
   RefreshCw, 
@@ -85,13 +83,11 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadAdminData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter]);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    loadAdminData();
-  };
 
   const handleTicketClick = async (ticket) => {
     try {
@@ -147,10 +143,10 @@ export default function AdminDashboard() {
 
   const getPriorityBadge = (p) => {
     const maps = {
-      Low: 'bg-blue-50 text-blue-700 border-blue-200',
-      Medium: 'bg-amber-50 text-amber-700 border-amber-200',
-      High: 'bg-orange-50 text-corporate-orange border-orange-200',
-      Critical: 'bg-red-50 text-red-700 border-red-200'
+      Low: 'bg-blue-50 text-blue-700 border-blue-200/50',
+      Medium: 'bg-amber-50 text-amber-700 border-amber-200/50',
+      High: 'bg-orange-50 text-corporate-orange border-orange-200/50',
+      Critical: 'bg-red-50 text-red-750 border-red-200/50 animate-pulse font-extrabold'
     };
     return (
       <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${maps[p] || 'bg-slate-50'}`}>
@@ -161,14 +157,19 @@ export default function AdminDashboard() {
 
   const getStatusBadge = (s) => {
     const maps = {
-      Open: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Pending: 'bg-sky-50 text-sky-700 border-sky-200',
-      Resolved: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-      Closed: 'bg-slate-100 text-slate-600 border-slate-200'
+      Open: 'bg-emerald-50 text-emerald-700 border-emerald-250/30',
+      Pending: 'bg-sky-50 text-sky-700 border-sky-250/30',
+      Resolved: 'bg-indigo-50 text-indigo-700 border-indigo-250/30',
+      Closed: 'bg-slate-100 text-slate-650 border-slate-200'
+    };
+    const pulseMap = {
+      Open: 'live-pulse-green',
+      Pending: 'live-pulse-orange',
     };
     return (
-      <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${maps[s] || 'bg-slate-50'}`}>
-        {s}
+      <span className={`inline-flex items-center space-x-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${maps[s] || 'bg-slate-50'}`}>
+        {pulseMap[s] && <span className={`w-1.5 h-1.5 ${pulseMap[s]}`}></span>}
+        <span>{s}</span>
       </span>
     );
   };

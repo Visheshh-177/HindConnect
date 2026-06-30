@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../api';
 
 const AuthContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
       const data = await api.getMe();
       setUser(data);
       await fetchNotifications();
-    } catch (error) {
+    } catch {
       console.warn('Session expired or invalid token');
       logout();
     } finally {
@@ -75,7 +76,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const notifData = await api.getNotifications();
         setNotifications(notifData);
-      } catch (err) {
+      } catch {
         // Ignored
       }
       
@@ -109,7 +110,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const unreadNotificationsCount = notifications.filter(n => !n.isRead).length;

@@ -13,12 +13,9 @@ const getHeaders = () => {
 
 const handleResponse = async (response) => {
   const contentType = response.headers.get('content-type');
-  let data = null;
-  if (contentType && contentType.includes('application/json')) {
-    data = await response.json();
-  } else {
-    data = { message: await response.text() };
-  }
+  const data = (contentType && contentType.includes('application/json'))
+    ? await response.json()
+    : { message: await response.text() };
 
   if (!response.ok) {
     throw new Error(data.message || 'Something went wrong');

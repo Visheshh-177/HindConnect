@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import AiAssistantPanel from '../components/AiAssistantPanel';
-import { Landmark, ArrowLeft, Upload, Send, Cpu, X } from 'lucide-react';
+import { ArrowLeft, Upload, Send, X } from 'lucide-react';
 
 export default function CreateTicketPage({ onNavigateSubpage }) {
   const { user, showAlert } = useAuth();
@@ -166,12 +166,12 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
   const departments = ['Refinery', 'Smelter', 'Corporate', 'Logistics', 'Finance', 'IT'];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex items-center space-x-3">
         <button
           onClick={() => onNavigateSubpage('dashboard_home')}
-          className="p-1.5 text-corporate-textMuted hover:text-corporate-blue hover:bg-slate-100 rounded-lg transition-colors border border-corporate-grayBorder bg-white"
+          className="p-1.5 text-corporate-textMuted hover:text-corporate-blue hover:bg-slate-100 rounded-xl transition-all border border-slate-200 bg-white shadow-sm hover:shadow active:scale-95 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -184,7 +184,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* Form Container */}
-        <div className="bg-white border border-corporate-grayBorder rounded-2xl p-6 shadow-sm lg:col-span-7 flex flex-col justify-between">
+        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm lg:col-span-7 flex flex-col justify-between hover-premium">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Title */}
             <div className="space-y-1.5">
@@ -198,7 +198,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
                 placeholder="Briefly state the incident (e.g. Printer offline in Smelter, VPN connection loop)"
                 value={title}
                 onChange={handleTitleChange}
-                className="w-full px-4 py-3 border border-corporate-grayBorder focus:border-corporate-blue focus:ring-1 focus:ring-corporate-blue rounded-xl text-xs sm:text-sm text-slate-800 outline-none"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none input-premium"
               />
             </div>
 
@@ -212,7 +212,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
                   id="ticket-dept"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-4 py-3 border border-corporate-grayBorder focus:border-corporate-blue focus:ring-1 focus:ring-corporate-blue rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white input-premium cursor-pointer"
                 >
                   {departments.map((dept) => (
                     <option key={dept} value={dept}>{dept}</option>
@@ -228,7 +228,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
                   id="ticket-urgency"
                   value={urgency}
                   onChange={(e) => setUrgency(e.target.value)}
-                  className="w-full px-4 py-3 border border-corporate-grayBorder focus:border-corporate-blue focus:ring-1 focus:ring-corporate-blue rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none bg-white input-premium cursor-pointer"
                 >
                   <option value="Low">Low (No operations impact)</option>
                   <option value="Medium">Medium (Partial disruption)</option>
@@ -250,7 +250,7 @@ export default function CreateTicketPage({ onNavigateSubpage }) {
                 placeholder="Describe what occurred, any error messages, and what steps you have already attempted. Mention your computer's asset ID if applicable."
                 value={description}
                 onChange={handleDescriptionChange}
-                className="w-full px-4 py-3 border border-corporate-grayBorder focus:border-corporate-blue focus:ring-1 focus:ring-corporate-blue rounded-xl text-xs sm:text-sm text-slate-800 outline-none resize-none"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 outline-none resize-none input-premium"
               ></textarea>
             </div>
 

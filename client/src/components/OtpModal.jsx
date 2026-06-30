@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../api';
 import { ShieldCheck, Mail, RotateCcw, AlertCircle, CheckCircle2, X, Loader2 } from 'lucide-react';
 

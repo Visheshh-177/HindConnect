@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Bell, LogOut, User as UserIcon, ShieldAlert, BookOpen, Menu, X, Landmark } from 'lucide-react';
+import { Bell, LogOut, ShieldAlert, Menu, X } from 'lucide-react';
 
 export default function Navbar({ onNavigate, currentPage }) {
   const { user, logout, notifications, unreadNotificationsCount, markNotificationsRead } = useAuth();
@@ -45,7 +45,7 @@ export default function Navbar({ onNavigate, currentPage }) {
   const navItems = [
     { label: 'Home', id: 'landing' },
     { label: 'Services', id: 'services' },
-    { label: 'IT Support', id: 'dashboard' },
+    { label: 'IT Support', id: 'it-support' },
     { label: 'Knowledge Base', id: 'kb' },
   ];
 
@@ -87,105 +87,105 @@ export default function Navbar({ onNavigate, currentPage }) {
             {user ? (
               <>
                 {/* Notifications Bell */}
-                <div className="relative">
-                  <button
-                    onClick={handleNotifClick}
-                    className="p-2 rounded-full transition-colors relative hover:bg-slate-100 text-slate-600"
-                  >
-                    <Bell className="w-5 h-5" />
-                    {unreadNotificationsCount > 0 && (
-                      <span className="absolute top-0.5 right-0.5 bg-corporate-orange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
-                        {unreadNotificationsCount}
-                      </span>
-                    )}
-                  </button>
-
-                  {/* Notifications Dropdown */}
-                  {showNotifDropdown && (
-                    <div className="absolute right-0 mt-3 w-80 bg-white border border-corporate-grayBorder shadow-premium rounded-xl py-2 z-50 text-slate-800 overflow-hidden">
-                      <div className="px-4 py-2 border-b border-corporate-grayBorder flex items-center justify-between">
-                        <span className="font-semibold text-sm text-corporate-blue">Notifications</span>
-                        {unreadNotificationsCount > 0 && (
-                          <button
-                            onClick={handleMarkAllRead}
-                            className="text-xs text-corporate-orange hover:text-corporate-orangeHover font-medium"
-                          >
-                            Mark all read
-                          </button>
-                        )}
-                      </div>
-                      <div className="max-h-64 overflow-y-auto">
-                        {notifications.length === 0 ? (
-                          <div className="px-4 py-6 text-center text-xs text-corporate-textMuted">
-                            No notifications to display
-                          </div>
-                        ) : (
-                          notifications.map((notif) => (
-                            <div
-                              key={notif.id || notif._id}
-                              className={`px-4 py-3 border-b border-slate-100 text-xs hover:bg-slate-50 transition-colors ${!notif.isRead ? 'bg-corporate-orangeLight/40 border-l-4 border-corporate-orange' : ''
-                                }`}
-                            >
-                              <p className="font-medium text-slate-700">{notif.message}</p>
-                              <span className="text-[10px] text-corporate-textMuted mt-1 block">
-                                {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Profile Controls */}
-                <div className="relative">
-                  <button
-                    onClick={handleProfileClick}
-                    className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-corporate-grayBorder hover:bg-slate-50 text-slate-700"
-                  >
-                    <div className="w-7 h-7 rounded-full bg-corporate-orange/20 text-corporate-orange flex items-center justify-center font-bold text-sm">
-                      {user.name.charAt(0)}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-xs font-semibold leading-none">{user.name}</p>
-                      <p className="text-[10px] text-corporate-textMuted leading-tight">{user.role}</p>
-                    </div>
-                  </button>
-
-                  {/* Profile Dropdown */}
-                  {showProfileDropdown && (
-                    <div className="absolute right-0 mt-3 w-56 bg-white border border-corporate-grayBorder shadow-premium rounded-xl py-2 z-50 text-slate-800">
-                      <div className="px-4 py-2 border-b border-corporate-grayBorder">
-                        <p className="text-xs text-corporate-textMuted">Logged in as</p>
-                        <p className="font-bold text-sm text-corporate-blue truncate">{user.email}</p>
-                        <p className="text-[10px] font-semibold text-corporate-orange mt-0.5">{user.department} Dept</p>
-                      </div>
-                      <a
-                        onClick={() => {
-                          setShowProfileDropdown(false);
-                          onNavigate('dashboard');
-                        }}
-                        className="flex items-center space-x-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
-                      >
-                        <ShieldAlert className="w-4 h-4 text-corporate-textMuted" />
-                        <span>Support Dashboard</span>
-                      </a>
-                      <hr className="border-slate-100" />
-                      <button
-                        onClick={() => {
-                          setShowProfileDropdown(false);
-                          logout();
-                          onNavigate('landing');
-                        }}
-                        className="w-full flex items-center space-x-2 px-4 py-2.5 text-xs text-red-600 hover:bg-red-50 transition-colors text-left"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Log Out</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
+                 <div className="relative">
+                   <button
+                     onClick={handleNotifClick}
+                     className="p-2 rounded-full transition-colors relative hover:bg-slate-100 text-slate-600"
+                   >
+                     <Bell className="w-5 h-5" />
+                     {unreadNotificationsCount > 0 && (
+                       <span className="absolute top-0.5 right-0.5 bg-corporate-orange text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white animate-pulse">
+                         {unreadNotificationsCount}
+                       </span>
+                     )}
+                   </button>
+ 
+                   {/* Notifications Dropdown */}
+                   {showNotifDropdown && (
+                     <div className="absolute right-0 mt-3 w-80 bg-white border border-corporate-grayBorder shadow-premium rounded-xl py-2 z-50 text-slate-800 overflow-hidden animate-slide-down">
+                       <div className="px-4 py-2 border-b border-corporate-grayBorder flex items-center justify-between">
+                         <span className="font-semibold text-sm text-corporate-blue">Notifications</span>
+                         {unreadNotificationsCount > 0 && (
+                           <button
+                             onClick={handleMarkAllRead}
+                             className="text-xs text-corporate-orange hover:text-corporate-orangeHover font-medium"
+                           >
+                             Mark all read
+                           </button>
+                         )}
+                       </div>
+                       <div className="max-h-64 overflow-y-auto">
+                         {notifications.length === 0 ? (
+                           <div className="px-4 py-6 text-center text-xs text-corporate-textMuted">
+                             No notifications to display
+                           </div>
+                         ) : (
+                           notifications.map((notif) => (
+                             <div
+                               key={notif.id || notif._id}
+                               className={`px-4 py-3 border-b border-slate-100 text-xs hover:bg-slate-50 transition-colors ${!notif.isRead ? 'bg-corporate-orangeLight/40 border-l-4 border-corporate-orange' : ''
+                                 }`}
+                             >
+                               <p className="font-medium text-slate-700">{notif.message}</p>
+                               <span className="text-[10px] text-corporate-textMuted mt-1 block">
+                                 {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                               </span>
+                             </div>
+                           ))
+                         )}
+                       </div>
+                     </div>
+                   )}
+                 </div>
+ 
+                 {/* Profile Controls */}
+                 <div className="relative">
+                   <button
+                     onClick={handleProfileClick}
+                     className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-corporate-grayBorder hover:bg-slate-50 text-slate-700 transition-all duration-250 active:scale-95"
+                   >
+                     <div className="w-7 h-7 rounded-full bg-corporate-orange/20 text-corporate-orange flex items-center justify-center font-bold text-sm">
+                       {user.name.charAt(0)}
+                     </div>
+                     <div className="text-left">
+                       <p className="text-xs font-semibold leading-none">{user.name}</p>
+                       <p className="text-[10px] text-corporate-textMuted leading-tight">{user.role}</p>
+                     </div>
+                   </button>
+ 
+                   {/* Profile Dropdown */}
+                   {showProfileDropdown && (
+                     <div className="absolute right-0 mt-3 w-56 bg-white border border-corporate-grayBorder shadow-premium rounded-xl py-2 z-50 text-slate-800 animate-slide-down">
+                       <div className="px-4 py-2 border-b border-corporate-grayBorder">
+                         <p className="text-xs text-corporate-textMuted">Logged in as</p>
+                         <p className="font-bold text-sm text-corporate-blue truncate">{user.email}</p>
+                         <p className="text-[10px] font-semibold text-corporate-orange mt-0.5">{user.department} Dept</p>
+                       </div>
+                       <a
+                         onClick={() => {
+                           setShowProfileDropdown(false);
+                           onNavigate('dashboard');
+                         }}
+                         className="flex items-center space-x-2 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                       >
+                         <ShieldAlert className="w-4 h-4 text-corporate-textMuted" />
+                         <span>Support Dashboard</span>
+                       </a>
+                       <hr className="border-slate-100" />
+                       <button
+                         onClick={() => {
+                           setShowProfileDropdown(false);
+                           logout();
+                           onNavigate('landing');
+                         }}
+                         className="w-full flex items-center space-x-2 px-4 py-2.5 text-xs text-red-650 hover:bg-red-50 transition-colors text-left"
+                       >
+                         <LogOut className="w-4 h-4" />
+                         <span>Log Out</span>
+                       </button>
+                     </div>
+                   )}
+                 </div>
               </>
             ) : (
               <button

@@ -1,21 +1,14 @@
-import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, 
   PlusCircle, 
   Ticket, 
   BookOpen, 
-  Settings, 
-  Bell, 
-  Activity, 
-  Users, 
-  AlertOctagon,
-  LogOut,
   FolderOpen
 } from 'lucide-react';
 
 export default function Sidebar({ currentSubpage, onSubpageChange }) {
-  const { user, logout, unreadNotificationsCount } = useAuth();
+  const { user } = useAuth();
 
   if (!user) return null;
 
@@ -45,9 +38,9 @@ export default function Sidebar({ currentSubpage, onSubpageChange }) {
     <aside className="w-64 bg-white text-slate-700 min-h-screen flex flex-col justify-between border-r border-corporate-grayBorder">
       <div>
         {/* User Card */}
-        <div className="p-6 border-b border-corporate-grayBorder bg-slate-50/50">
+        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-corporate-orange/15 text-corporate-orange flex items-center justify-center font-bold text-lg shadow-sm border border-corporate-orange/20">
+            <div className="w-10 h-10 rounded-xl bg-corporate-orange/10 text-corporate-orange flex items-center justify-center font-bold text-lg shadow-sm border border-corporate-orange/20 transform hover:scale-105 transition-transform">
               {user.name.charAt(0)}
             </div>
             <div className="truncate">
@@ -55,14 +48,14 @@ export default function Sidebar({ currentSubpage, onSubpageChange }) {
               <p className="text-[10px] text-corporate-orange font-bold uppercase tracking-wider">{user.role}</p>
             </div>
           </div>
-          <div className="mt-3 bg-slate-100 rounded-lg p-2 text-center text-[10px] font-semibold text-slate-600 border border-slate-200">
+          <div className="mt-3 bg-slate-100/80 rounded-xl p-2 text-center text-[10px] font-bold text-slate-600 border border-slate-200/55">
             {user.department} Department
           </div>
         </div>
 
         {/* Menu Navigation */}
-        <nav className="p-4 space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-2">Navigation</p>
+        <nav className="p-4 space-y-1.5">
+          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-3 mb-3">Navigation</p>
           {activeRoleItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentSubpage === item.id;
@@ -70,13 +63,13 @@ export default function Sidebar({ currentSubpage, onSubpageChange }) {
               <button
                 key={item.id}
                 onClick={() => onSubpageChange(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-200 ${
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all duration-300 transform active:scale-95 border-l-4 ${
                   isActive 
-                    ? 'bg-corporate-orangeLight text-corporate-orange shadow-sm border border-corporate-orange/25' 
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-corporate-orange/10 text-corporate-orange shadow-sm border border-corporate-orange/20 border-l-corporate-orange' 
+                    : 'text-slate-650 hover:bg-slate-50 hover:text-slate-900 border-l-transparent'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-corporate-orange' : 'text-slate-400'}`} />
+                <Icon className={`w-4.5 h-4.5 ${isActive ? 'text-corporate-orange' : 'text-slate-455'}`} />
                 <span>{item.label}</span>
               </button>
             );

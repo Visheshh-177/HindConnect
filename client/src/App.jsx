@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
@@ -16,14 +16,18 @@ function AppContent() {
   // Redirect to dashboard if logged in and try to visit login
   useEffect(() => {
     if (user && currentPage === 'login') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPage('dashboard');
     }
   }, [user, currentPage]);
 
   const handleNavigate = (page) => {
-    if (page === 'dashboard' && !user) {
+    // Guard: redirect to login if accessing protected pages without auth
+    if ((page === 'dashboard' || page === 'create-ticket') && !user) {
       setCurrentPage('login');
-    } else if (page === 'services') {
+      return;
+    }
+    if (page === 'services') {
       setCurrentPage('landing');
       // Scroll to services section
       setTimeout(() => {
@@ -32,9 +36,20 @@ function AppContent() {
           servicesSection.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
-    } else {
-      setCurrentPage(page);
+      return;
     }
+    if (page === 'it-support') {
+      setCurrentPage('landing');
+      // Scroll to IT Support section
+      setTimeout(() => {
+        const itSupportSection = document.getElementById('it-support-section');
+        if (itSupportSection) {
+          itSupportSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+      return;
+    }
+    setCurrentPage(page);
   };
 
   const getAlertStyle = (type) => {
@@ -75,7 +90,7 @@ function AppContent() {
           </>
         );
       case 'login':
-        return <LoginPage onLoginSuccess={() => setCurrentPage('dashboard')} />;
+        return <LoginPage onLoginSuccess={() => setCurrentPage('dashboard')} onNavigate={handleNavigate} />;
       case 'dashboard':
         return <Dashboard />;
       case 'kb':

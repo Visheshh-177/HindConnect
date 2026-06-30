@@ -23,6 +23,7 @@ const seed = async () => {
   const employeePwd = await bcrypt.hash('password123', salt);
   const staffPwd = await bcrypt.hash('password123', salt);
   const adminPwd = await bcrypt.hash('password123', salt);
+  const visheshPwd = await bcrypt.hash('123456789', salt);
 
   // 3. Create Users
   const usersToCreate = [
@@ -88,6 +89,14 @@ const seed = async () => {
       password: adminPwd,
       role: 'Admin',
       department: 'IT',
+      isApproved: true
+    },
+    {
+      name: 'Vishesh Kumar Singh',
+      email: 'vishesh4757@gmail.com',
+      password: visheshPwd,
+      role: 'Admin',
+      department: 'IT Management',
       isApproved: true
     }
   ];

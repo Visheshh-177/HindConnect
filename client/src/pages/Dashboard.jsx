@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import EmployeeDashboard from './EmployeeDashboard';
 import CreateTicketPage from './CreateTicketPage';
@@ -6,7 +6,7 @@ import ItStaffDashboard from './ItStaffDashboard';
 import AdminDashboard from './AdminDashboard';
 import KnowledgeBasePage from './KnowledgeBasePage';
 import { useAuth } from '../context/AuthContext';
-import { Landmark, Menu, ShieldCheck, ChevronRight, X, LogOut } from 'lucide-react';
+import { Landmark, ShieldCheck, ChevronRight, X, LogOut } from 'lucide-react';
 
 const getDossierDetails = (user) => {
   if (!user) return null;
@@ -103,6 +103,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       if (user.role === 'Employee') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentSubpage('dashboard_home');
       } else if (user.role === 'IT Staff') {
         setCurrentSubpage('staff_home');
@@ -213,11 +214,11 @@ export default function Dashboard() {
         <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto pb-16 space-y-6">
           {/* Digital Employee Dossier Card */}
           {user && (
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl shadow-premium overflow-hidden transition-all duration-300">
+            <div className="bg-white border border-corporate-grayBorder/85 rounded-2xl shadow-premium hover:shadow-premium-hover overflow-hidden transition-all duration-300 animate-slide-up">
               {/* Header ribbon */}
               <div 
                 onClick={() => setIsProfileExpanded(!isProfileExpanded)}
-                className="bg-gradient-to-r from-corporate-blue to-corporate-blueLight px-6 py-3 flex justify-between items-center cursor-pointer select-none"
+                className="bg-gradient-to-r from-corporate-blue to-corporate-blueLight px-6 py-3.5 flex justify-between items-center cursor-pointer select-none"
               >
                 <div className="flex items-center space-x-2 text-white">
                   <Landmark className="w-4 h-4 text-corporate-orange" />

@@ -1,6 +1,4 @@
-import React from 'react';
 import StatsCounter from '../components/StatsCounter';
-import { useAuth } from '../context/AuthContext';
 import {
   ShieldCheck,
   Clock,
@@ -18,7 +16,6 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage({ onNavigate }) {
-  const { user } = useAuth();
 
   // Hindalco corporate values cards data
   const values = [
@@ -94,45 +91,45 @@ export default function LandingPage({ onNavigate }) {
   ];
 
   return (
-    <div className="bg-corporate-gray min-h-screen pt-20">
+    <div className="bg-[#F8FAFC] corporate-grid-bg min-h-screen pt-20 animate-fade-in">
       {/* 1. Hero Section */}
-      <section className="bg-gradient-to-br from-slate-50 via-blue-50/40 to-orange-50/30 text-slate-800 py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-corporate-grayBorder">
+      <section className="bg-gradient-mesh text-slate-100 py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden border-b border-corporate-blueLight animate-gradient-shift">
         {/* Background Image overlay with transparency */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0"
-          style={{ backgroundImage: "url('/backg.jpg')", opacity: 0.27 }}
+          style={{ backgroundImage: "url('/backg.jpg')", opacity: 0.08, mixBlendMode: 'overlay' }}
         />
         {/* Glow patterns */}
-        <div className="absolute top-1/4 left-1/10 w-96 h-96 bg-corporate-orange/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-corporate-orange/10 rounded-full blur-3xl pointer-events-none z-0 animate-pulse-glow" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none z-0 animate-pulse-glow" style={{ animationDelay: '2s' }} />
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
           {/* Left Hero */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center space-x-2 bg-corporate-orangeLight border border-corporate-orange/20 px-3 py-1 rounded-full text-xs font-bold text-corporate-orange">
-              <Cpu className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '3s' }} />
-              <span>Next-Gen Helpdesk Integration</span>
+          <div className="lg:col-span-7 space-y-6 animate-slide-up">
+            <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/15 px-3.5 py-1 rounded-full text-xs font-bold text-corporate-orange w-fit animate-float">
+              <Cpu className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '4s' }} />
+              <span className="text-white">Next-Gen Helpdesk Integration</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-none text-corporate-blue">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-corporate-orange">
               HindConnect
             </h1>
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-700">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-200">
               Intelligent IT Helpdesk & Support Portal
             </h2>
-            <p className="text-sm sm:text-base text-corporate-textMuted max-w-xl leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed font-medium">
               Simplifying enterprise IT support through smart automation, AI-powered ticket management, and centralized issue tracking across all manufacturing refineries, smelters, and corporate offices.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button
                 onClick={() => onNavigate('dashboard')}
-                className="bg-corporate-orange text-white text-sm font-bold px-6 py-3 rounded-lg hover:bg-corporate-orangeHover transition-all shadow-lg flex items-center space-x-2 border border-transparent"
+                className="bg-corporate-orange text-white text-sm font-bold px-6 py-3.5 rounded-xl hover:bg-corporate-orangeHover transition-all shadow-lg hover:shadow-corporate-orange/40 flex items-center space-x-2 border border-transparent transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 <span>Raise Support Ticket</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button
                 onClick={() => onNavigate('dashboard')}
-                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-sm font-semibold px-6 py-3 rounded-lg transition-colors"
+                className="bg-white/10 hover:bg-white/15 border border-white/15 text-white text-sm font-semibold px-6 py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 Track Active Incident
               </button>
@@ -140,46 +137,46 @@ export default function LandingPage({ onNavigate }) {
           </div>
 
           {/* Right Hero - Mockup dashboard container */}
-          <div className="lg:col-span-5 relative">
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl p-6 shadow-premium text-slate-700 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="lg:col-span-5 relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-premium hover:shadow-premium-hover transition-all duration-300 text-slate-200 space-y-4 backdrop-blur-md">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
                 </div>
                 <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">HindConnect Engine</span>
               </div>
               
               <div className="space-y-3">
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60 flex items-center justify-between">
+                <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">VPN Gateway Latency</h4>
-                    <p className="text-[10px] text-slate-500">Corporate AD Server Node</p>
+                    <h4 className="text-xs font-bold text-white">VPN Gateway Latency</h4>
+                    <p className="text-[10px] text-slate-405">Corporate AD Server Node</p>
                   </div>
-                  <span className="text-xs text-green-600 font-extrabold uppercase bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">Operational</span>
+                  <span className="text-[10px] text-green-400 font-extrabold uppercase bg-green-500/20 px-2.5 py-1 rounded-full border border-green-500/20">Operational</span>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                <div className="bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="flex items-center justify-between mb-1.5">
-                    <h4 className="text-xs font-bold text-slate-800">IT Ticket Queue Weight</h4>
-                    <span className="text-[10px] text-slate-500 font-semibold">Triage Score</span>
+                    <h4 className="text-xs font-bold text-white">IT Ticket Queue Weight</h4>
+                    <span className="text-[10px] text-slate-405 font-semibold">Triage Score</span>
                   </div>
-                  <div className="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden">
-                    <div className="bg-corporate-orange h-full rounded-full" style={{ width: '42%' }}></div>
+                  <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div className="bg-corporate-orange h-full rounded-full transition-all duration-1000" style={{ width: '42%' }}></div>
                   </div>
                 </div>
 
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60 flex items-center justify-between">
+                <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">AI Categorizer accuracy</h4>
-                    <p className="text-[10px] text-slate-500">Pattern classification logs</p>
+                    <h4 className="text-xs font-bold text-white">AI Categorizer accuracy</h4>
+                    <p className="text-[10px] text-slate-405">Pattern classification logs</p>
                   </div>
                   <span className="text-xs text-corporate-orange font-bold">98.2%</span>
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-between items-center text-[10px] text-slate-400">
+              <div className="pt-2 flex justify-between items-center text-[10px] text-slate-405">
                 <span>API Status: 200 OK</span>
                 <span>Active Engineers: 14 On-Call</span>
               </div>
@@ -189,11 +186,11 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 2. Values Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center space-y-3 mb-16">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center space-y-3 mb-16 animate-slide-up">
           <h2 className="text-xs font-bold uppercase tracking-widest text-corporate-orange">Our Core Standards</h2>
           <h3 className="text-3xl font-extrabold text-corporate-blue tracking-tight">Inspired by Corporate Values</h3>
-          <p className="text-sm text-corporate-textMuted max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
             Aligning HindConnect support mechanisms directly with the values governing our organization.
           </p>
         </div>
@@ -201,30 +198,32 @@ export default function LandingPage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {values.map((v, index) => {
             const Icon = v.icon;
+            const delayClasses = ['delay-100', 'delay-200', 'delay-300', 'delay-400', 'delay-500'];
+            const delayClass = delayClasses[index] || '';
             return (
               <div
                 key={v.title}
-                className="bg-white border border-corporate-grayBorder hover:border-corporate-orange/30 rounded-2xl overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500 group flex flex-col justify-between"
+                className={`sexy-card rounded-2xl overflow-hidden shadow-premium flex flex-col justify-between animate-slide-up group ${delayClass}`}
               >
                 {/* Image Section with Overlay */}
                 <div className="relative h-44 overflow-hidden bg-slate-100">
                   <img
                     src={v.image}
                     alt={v.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent"></div>
-                  <div className="absolute bottom-3 left-4 flex items-center space-x-2">
-                    <div className={`w-8 h-8 rounded-lg border flex items-center justify-center bg-white shadow-md ${v.color}`}>
-                      <Icon className="w-4 h-4" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/25 to-transparent group-hover:from-slate-950/95 transition-all duration-300"></div>
+                  <div className="absolute bottom-3.5 left-4 flex items-center space-x-2">
+                    <div className={`w-8 h-8 rounded-lg border flex items-center justify-center bg-white shadow-md ${v.color} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
+                      <Icon className="w-4 h-4 animate-float" />
                     </div>
-                    <span className="font-bold text-white text-base drop-shadow-md">{v.title}</span>
+                    <span className="font-bold text-white text-sm drop-shadow-md group-hover:text-corporate-orange transition-colors duration-300">{v.title}</span>
                   </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="p-5 flex-grow flex flex-col justify-between">
-                  <p className="text-xs text-corporate-textMuted leading-relaxed">
+                <div className="p-5 flex-grow flex flex-col justify-between bg-white">
+                  <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">
                     {v.desc}
                   </p>
                 </div>
@@ -235,12 +234,12 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 3. Services Section */}
-      <section className="bg-white border-y border-corporate-grayBorder py-20 px-4 sm:px-6 lg:px-8">
+      <section id="it-support-section" className="bg-white border-y border-slate-100 py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center space-y-3 mb-16">
             <h2 className="text-xs font-bold uppercase tracking-widest text-corporate-orange">Features Index</h2>
             <h3 className="text-3xl font-extrabold text-corporate-blue tracking-tight">IT Support Solutions</h3>
-            <p className="text-sm text-corporate-textMuted max-w-xl mx-auto leading-relaxed">
+            <p className="text-sm text-slate-500 max-w-xl mx-auto leading-relaxed">
               Equipped with analytical and AI frameworks to handle issues with structural precision.
             </p>
           </div>
@@ -251,14 +250,14 @@ export default function LandingPage({ onNavigate }) {
               return (
                 <div
                   key={s.title}
-                  className="bg-corporate-gray border border-corporate-grayBorder hover:border-corporate-blue/20 rounded-2xl p-6 shadow-sm hover:shadow-premium transition-all duration-200 flex space-x-4"
+                  className="sexy-card rounded-2xl p-6 flex space-x-4"
                 >
                   <div className="bg-corporate-blue/5 text-corporate-blue p-3 rounded-xl h-12 w-12 flex items-center justify-center shrink-0">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-bold text-sm text-corporate-blue">{s.title}</h4>
-                    <p className="text-xs text-corporate-textMuted leading-relaxed">{s.desc}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
                   </div>
                 </div>
               );
@@ -268,7 +267,7 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 4. Live Analytics Ticker */}
-      <section className="bg-gradient-to-r from-corporate-blueSoft via-white to-corporate-blueSoft border-y border-corporate-grayBorder text-slate-800 py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="bg-gradient-to-r from-corporate-blueSoft/50 via-white to-corporate-blueSoft/50 border-y border-slate-100 text-slate-800 py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Glow */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-corporate-orange/5 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -280,7 +279,7 @@ export default function LandingPage({ onNavigate }) {
                 <StatsCounter target={15248} />
               </p>
               <p className="text-xs font-bold text-corporate-blue">Tickets Resolved</p>
-              <p className="text-[10px] text-corporate-textMuted">Historical count</p>
+              <p className="text-[10px] text-slate-400">Historical count</p>
             </div>
 
             <div className="space-y-1">
@@ -288,7 +287,7 @@ export default function LandingPage({ onNavigate }) {
                 <StatsCounter target={8420} />
               </p>
               <p className="text-xs font-bold text-corporate-blue">Active Users</p>
-              <p className="text-[10px] text-corporate-textMuted">System nodes</p>
+              <p className="text-[10px] text-slate-400">System nodes</p>
             </div>
 
             <div className="space-y-1">
@@ -296,7 +295,7 @@ export default function LandingPage({ onNavigate }) {
                 <StatsCounter target={98.4} decimals={1} suffix="%" />
               </p>
               <p className="text-xs font-bold text-corporate-blue">SLA Compliance</p>
-              <p className="text-[10px] text-corporate-textMuted">Target score</p>
+              <p className="text-[10px] text-slate-400">Target score</p>
             </div>
 
             <div className="space-y-1">
@@ -304,7 +303,7 @@ export default function LandingPage({ onNavigate }) {
                 <StatsCounter target={2.4} decimals={1} suffix="h" />
               </p>
               <p className="text-xs font-bold text-corporate-blue">Avg Resolution</p>
-              <p className="text-[10px] text-corporate-textMuted">S1-S4 incidents</p>
+              <p className="text-[10px] text-slate-400">S1-S4 incidents</p>
             </div>
 
             <div className="space-y-1 col-span-2 md:col-span-1">
@@ -312,7 +311,7 @@ export default function LandingPage({ onNavigate }) {
                 <StatsCounter target={14} />
               </p>
               <p className="text-xs font-bold text-corporate-blue">Support Teams</p>
-              <p className="text-[10px] text-corporate-textMuted">On-call standby</p>
+              <p className="text-[10px] text-slate-400">On-call standby</p>
             </div>
 
           </div>

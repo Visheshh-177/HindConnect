@@ -1,29 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Send, Cpu, HelpCircle } from 'lucide-react';
 import { api } from '../api';
-
-const NamasteIcon = ({ className }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2.2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    {/* Left Hand */}
-    <path d="M10 21s-1-3.5-1-6.5C9 10.5 12 7.5 12 3.5" />
-    <path d="M8.5 21S7 18 7.5 14.5c.3-2.5 2-4.5 2.5-6.5" />
-    {/* Right Hand */}
-    <path d="M14 21s1-3.5 1-6.5c0-4-3-7-3-11" />
-    <path d="M15.5 21S17 18 16.5 14.5c-.3-2.5-2-4.5-2.5-6.5" />
-    {/* Wrist base */}
-    <path d="M9.5 21h5" />
-  </svg>
-);
-
-
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -111,7 +88,7 @@ export default function ChatbotWidget() {
       {/* 1. Chat Window Container */}
       <div 
         className={`bg-white rounded-2xl shadow-premium border border-slate-200/80 w-[350px] sm:w-[380px] h-[500px] flex flex-col mb-4 overflow-hidden transition-all duration-300 transform origin-bottom-right ${
-          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-10 pointer-events-none'
+          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'hidden'
         }`}
       >
         {/* Header Section */}

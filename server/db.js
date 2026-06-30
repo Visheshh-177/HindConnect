@@ -296,11 +296,13 @@ const getModel = (name, mongoModelFactory, jsonCollectionName) => {
   return {
     find: (query) => useMongo ? mongoModelFactory().find(query).lean() : new JsonModel(jsonCollectionName).find(query),
     findOne: (query) => useMongo ? mongoModelFactory().findOne(query).lean() : new JsonModel(jsonCollectionName).findOne(query),
-    findById: (id) => useMongo ? mongoModelFactory().findById(id).lean() : new JsonModel(jsonCollectionName).findById(id),
+    findById: (id) => (useMongo && mongoose.Types.ObjectId.isValid(id)) 
+      ? mongoModelFactory().findById(id).lean() 
+      : (!useMongo ? new JsonModel(jsonCollectionName).findById(id) : null),
     create: (data) => useMongo ? mongoModelFactory().create(data) : new JsonModel(jsonCollectionName).create(data),
-    findByIdAndUpdate: (id, update, options) => useMongo 
+    findByIdAndUpdate: (id, update, options) => (useMongo && mongoose.Types.ObjectId.isValid(id))
       ? mongoModelFactory().findByIdAndUpdate(id, update, { new: true, ...options }).lean() 
-      : new JsonModel(jsonCollectionName).findByIdAndUpdate(id, update, options),
+      : (!useMongo ? new JsonModel(jsonCollectionName).findByIdAndUpdate(id, update, options) : null),
     updateOne: (query, update) => useMongo 
       ? mongoModelFactory().updateOne(query, update) 
       : new JsonModel(jsonCollectionName).updateOne(query, update),

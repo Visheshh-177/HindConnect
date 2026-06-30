@@ -1,5 +1,4 @@
-import React from 'react';
-import { Cpu, AlertTriangle, CheckCircle2, ShieldQuestion, HelpCircle, ArrowRight } from 'lucide-react';
+import { Cpu, AlertTriangle, CheckCircle2, HelpCircle } from 'lucide-react';
 
 export default function AiAssistantPanel({ loading, suggestions }) {
   if (!suggestions) {

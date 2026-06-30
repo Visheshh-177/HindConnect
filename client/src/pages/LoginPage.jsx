@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Landmark, Mail, Lock, ShieldAlert, User, Compass } from 'lucide-react';
 import { api } from '../api';
 import OtpModal from '../components/OtpModal';
 
-const navItems = [
-  { label: 'Home', id: 'landing' }
-];
 
-export default function LoginPage({ onLoginSuccess }) {
+export default function LoginPage({ onLoginSuccess, onNavigate }) {
   const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -113,25 +110,28 @@ export default function LoginPage({ onLoginSuccess }) {
       role: 'Employee',
       name: 'Rajesh Sharma',
       email: 'rajesh.sharma@hindconnect.com',
+      password: 'password123',
       dept: 'Refinery'
     },
     {
       role: 'IT Staff',
       name: 'Amit Verma',
       email: 'amit.verma@hindconnect.com',
+      password: 'password123',
       dept: 'IT Support'
     },
     {
       role: 'Admin',
-      name: 'Vikram Aditya',
-      email: 'vikram.aditya@hindconnect.com',
+      name: 'Vishesh Kumar Singh',
+      email: 'vishesh4757@gmail.com',
+      password: '123456789',
       dept: 'IT Management'
     }
   ];
 
   const handleQuickSelect = (account) => {
     setEmail(account.email);
-    setPassword('password123');
+    setPassword(account.password);
     setIsRegister(false);
     setErrorMsg('');
     setSuccessMsg('');
@@ -152,12 +152,12 @@ export default function LoginPage({ onLoginSuccess }) {
       )}
       {/* 1. Left side - Corporate brand & Illustration */}
       <div
-        className="w-full md:w-1/2 text-white flex flex-col justify-between p-10 md:p-20 relative overflow-hidden bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "linear-gradient(135deg, rgba(15, 41, 66, 0.93) 0%, rgba(30, 62, 98, 0.83) 100%), url('/backg.jpg')" }}
+        className="w-full md:w-1/2 text-white flex flex-col justify-between p-10 md:p-20 relative overflow-hidden bg-cover bg-center bg-no-repeat bg-gradient-mesh animate-gradient-shift"
+        style={{ backgroundImage: "linear-gradient(135deg, rgba(10, 30, 49, 0.95) 0%, rgba(15, 41, 66, 0.85) 100%), url('/backg.jpg')" }}
       >
         {/* Glow patterns */}
-        <div className="absolute top-1/3 right-1/10 w-96 h-96 bg-corporate-orange/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/3 right-1/10 w-96 h-96 bg-corporate-orange/15 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style={{ animationDelay: '2.5s' }}></div>
 
         {/* Brand logo top */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigate('landing')}>
@@ -165,7 +165,7 @@ export default function LoginPage({ onLoginSuccess }) {
             <img src="/logo.webp" alt="HindConnect Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <span className="text-xl font-bold tracking-tight block text-corporate-blue">
+            <span className="text-xl font-bold tracking-tight block text-white">
               HindConnect
             </span>
             <span className="text-[10px] uppercase tracking-widest text-corporate-orange font-bold -mt-1 block">
@@ -176,7 +176,7 @@ export default function LoginPage({ onLoginSuccess }) {
 
         {/* Corporate Quote / Welcome center */}
         <div className="space-y-6 max-w-lg my-12 z-10 font-sans">
-          <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/15 px-3 py-1 rounded-full text-xs font-bold text-corporate-orange">
+          <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/15 px-3 py-1 rounded-full text-xs font-bold text-corporate-orange animate-float">
             <Landmark className="w-3.5 h-3.5 animate-pulse" />
             <span className="text-white">Hindalco Industries Ltd.</span>
           </div>
@@ -205,8 +205,12 @@ export default function LoginPage({ onLoginSuccess }) {
       </div>
 
       {/* 2. Right side - Form */}
-      <div className="w-full md:w-1/2 bg-gradient-to-b from-slate-50 to-white flex flex-col justify-center p-8 sm:p-12 md:p-20 border-l border-corporate-grayBorder">
-        <div className="max-w-md w-full mx-auto space-y-6">
+      <div className="w-full md:w-1/2 bg-slate-50 flex flex-col justify-center p-6 sm:p-12 md:p-16 border-l border-corporate-grayBorder relative overflow-hidden">
+        {/* Animated backdrops */}
+        <div className="absolute top-[-10%] right-[-10%] w-80 h-80 bg-corporate-orange/5 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-corporate-blue/5 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style={{ animationDelay: '3s' }}></div>
+
+        <div className="max-w-md w-full mx-auto bg-white border border-corporate-grayBorder/90 rounded-2xl p-6 sm:p-8 shadow-premium hover:shadow-premium-hover transition-all duration-300 animate-slide-up relative z-10 space-y-6">
           <div className="text-center md:text-left">
             <h2 className="text-2xl md:text-3xl font-extrabold text-corporate-blue tracking-tight">
               {isRegister ? 'Register Account' : 'Sign In to HindConnect'}
@@ -531,7 +535,7 @@ export default function LoginPage({ onLoginSuccess }) {
           <div className="pt-6 border-t border-corporate-grayBorder">
             <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3.5 flex items-center">
               <User className="w-3.5 h-3.5 mr-1 text-corporate-orange" />
-              <span>Developer Quick Switch (Evaluator Profiles)</span>
+              <span>Quick Login — Click to Auto-Fill</span>
             </h4>
             <div className="grid grid-cols-1 gap-2.5">
               {quickAccounts.map((account) => (

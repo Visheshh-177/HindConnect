@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { 
-  BookOpen, 
   Search, 
   ThumbsUp, 
   Eye, 
   ArrowLeft,
   ChevronRight,
-  HelpCircle,
-  FileText
+  HelpCircle
 } from 'lucide-react';
 
 export default function KnowledgeBasePage() {
@@ -39,7 +37,9 @@ export default function KnowledgeBasePage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadArticles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryFilter]);
 
   const handleSearchSubmit = (e) => {
@@ -281,7 +281,7 @@ export default function KnowledgeBasePage() {
                       </h4>
                       
                       <p className="text-xs text-corporate-textMuted line-clamp-3 leading-relaxed">
-                        {art.content.replace(/[#*`\-]/g, '').substring(0, 160)}...
+                        {art.content.replace(/[#*`-]/g, '').substring(0, 160)}...
                       </p>
                     </div>
 

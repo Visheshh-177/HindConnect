@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function StatsCounter({ target, duration = 1200, suffix = '', decimals = 0 }) {
   const [count, setCount] = useState(0);

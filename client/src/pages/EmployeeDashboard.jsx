@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -10,7 +10,6 @@ import {
   MessageSquare, 
   RefreshCw, 
   Send,
-  User as UserIcon,
   ChevronRight,
   X,
   FileSpreadsheet
@@ -36,7 +35,7 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
         try {
           const detail = await api.getTicketById(t.id || t._id);
           return detail.activities || [];
-        } catch (e) {
+        } catch {
           return [];
         }
       });
@@ -51,7 +50,9 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTicketClick = async (ticket) => {
@@ -70,7 +71,7 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
     try {
       setSubmitCommentLoading(true);
       const ticketId = selectedTicket.ticket.id || selectedTicket.ticket._id;
-      const newComment = await api.addComment(ticketId, commentText);
+      await api.addComment(ticketId, commentText);
       
       // Refresh ticket detail
       const refreshedDetail = await api.getTicketById(ticketId);
@@ -121,29 +122,34 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
 
   const getStatusBadge = (s) => {
     const maps = {
-      Open: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Pending: 'bg-sky-50 text-sky-700 border-sky-200',
-      Resolved: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-      Closed: 'bg-slate-100 text-slate-600 border-slate-200'
+      Open: 'bg-emerald-50 text-emerald-700 border-emerald-250/30',
+      Pending: 'bg-sky-50 text-sky-700 border-sky-250/30',
+      Resolved: 'bg-indigo-50 text-indigo-700 border-indigo-250/30',
+      Closed: 'bg-slate-100 text-slate-650 border-slate-200'
+    };
+    const pulseMap = {
+      Open: 'live-pulse-green',
+      Pending: 'live-pulse-orange',
     };
     return (
-      <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${maps[s] || 'bg-slate-50 text-slate-700'}`}>
-        {s}
+      <span className={`inline-flex items-center space-x-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${maps[s] || 'bg-slate-50 text-slate-700'}`}>
+        {pulseMap[s] && <span className={`w-1.5 h-1.5 ${pulseMap[s]}`}></span>}
+        <span>{s}</span>
       </span>
     );
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Upper Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-slide-up">
         <div>
           <h2 className="text-xl font-extrabold text-corporate-blue tracking-tight">Support Dashboard</h2>
           <p className="text-xs text-corporate-textMuted mt-0.5">Welcome back, {user.name}. Track your open IT incidents.</p>
         </div>
         <button
           onClick={() => onNavigateSubpage('raise_ticket')}
-          className="bg-corporate-orange hover:bg-corporate-orangeHover text-white text-xs font-bold px-4 py-2.5 rounded-lg flex items-center space-x-2 transition-colors self-start shadow"
+          className="bg-corporate-orange hover:bg-corporate-orangeHover text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 shadow hover:shadow-corporate-orange/20 cursor-pointer animate-float"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Raise New Ticket</span>
@@ -157,44 +163,44 @@ export default function EmployeeDashboard({ onNavigateSubpage }) {
       ) : (
         <>
           {/* 1. Analytics Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl p-5 shadow-sm flex items-center space-x-4">
-              <div className="p-3 bg-emerald-50 text-emerald-700 rounded-xl">
-                <FileText className="w-6 h-6" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="sexy-card rounded-2xl p-5 shadow-sm flex items-center space-x-4">
+              <div className="p-3 bg-emerald-55/10 text-emerald-600 rounded-xl">
+                <FileText className="w-6 h-6 animate-float" />
               </div>
               <div>
                 <span className="text-2xl font-extrabold text-corporate-blue">{openCount}</span>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Open Tickets</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">Open Tickets</p>
               </div>
             </div>
 
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl p-5 shadow-sm flex items-center space-x-4">
-              <div className="p-3 bg-sky-50 text-sky-700 rounded-xl">
-                <Clock className="w-6 h-6" />
+            <div className="sexy-card rounded-2xl p-5 shadow-sm flex items-center space-x-4">
+              <div className="p-3 bg-sky-55/10 text-sky-600 rounded-xl">
+                <Clock className="w-6 h-6 animate-float" style={{ animationDelay: '1s' }} />
               </div>
               <div>
                 <span className="text-2xl font-extrabold text-corporate-blue">{pendingCount}</span>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Pending</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">Pending</p>
               </div>
             </div>
 
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl p-5 shadow-sm flex items-center space-x-4">
-              <div className="p-3 bg-indigo-50 text-indigo-700 rounded-xl">
-                <CheckCircle className="w-6 h-6" />
+            <div className="sexy-card rounded-2xl p-5 shadow-sm flex items-center space-x-4">
+              <div className="p-3 bg-indigo-55/10 text-indigo-600 rounded-xl">
+                <CheckCircle className="w-6 h-6 animate-float" style={{ animationDelay: '2s' }} />
               </div>
               <div>
                 <span className="text-2xl font-extrabold text-corporate-blue">{resolvedCount}</span>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Resolved</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">Resolved</p>
               </div>
             </div>
 
-            <div className="bg-white border border-corporate-grayBorder rounded-2xl p-5 shadow-sm flex items-center space-x-4">
-              <div className="p-3 bg-red-50 text-red-700 rounded-xl">
+            <div className="sexy-card rounded-2xl p-5 shadow-sm flex items-center space-x-4 animate-pulse-glow" style={{ animationDuration: '4s' }}>
+              <div className="p-3 bg-red-55/10 text-red-650 rounded-xl">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div>
                 <span className="text-2xl font-extrabold text-corporate-blue">{criticalCount}</span>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Critical Issues</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">Critical Issues</p>
               </div>
             </div>
           </div>
