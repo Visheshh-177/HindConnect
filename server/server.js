@@ -102,9 +102,13 @@ app.get('/', (req, res) => {
 // Start Server
 const startServer = async () => {
   await connectDB();
-  app.listen(PORT, () => {
-    console.log(`HindConnect server running on port ${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+      console.log(`HindConnect server running on port ${PORT}`);
+    });
+  }
 };
 
 startServer();
+
+module.exports = app;
